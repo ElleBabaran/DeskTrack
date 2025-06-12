@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>DeskTrack</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
+
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, #dce6f9, #4e71db);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        h1 {
+
+            font-size: 80px;
+            text-shadow: 0px 9px 7px rgba(0, 0, 0, 0.25);
+            color: #333;
+            margin-bottom: 50px;
+            position:absolute;
+            top:50px;
+        }
+
+        .container {
+            display: flex;
+            gap: 60px;
+        }
+
+        .button-box {
+            background: white;
+            border-radius: 10px;
+            width: 200px;
+            height: 150px;
+            opacity: 80%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 2px 4px 10px rgba(0,0,0,0.9);
+            transition: transform 0.3s ease;
+            text-decoration: none;
+
+        }
+
+        .button-box:hover {
+            transform: scale(1.05);
+            cursor: pointer;
+        }
+
+        .button-box img {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 10px;
+        }
+
+        .button-box p {
+            color: grey;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+
+        }
+
+        .logo img {
+            height: 40px;
+        }
+
+        .text{
+            position: absolute;
+            top: 190px;
+            text-shadow: 0px 9px 7px rgba(0, 0, 0, 0.25);
+            opacity: 70%;
+
+
+        }
+
+    </style>
+</head>
+<body>
+<div class="logo">
+    <img th:src="@{/img/logo.png}" alt="DeskTrack Logo">
+</div>
+
+<h1>DESKTRACK</h1>
+<p class="text">Choose your role: </p>
+
+<div class="container">
+    <a class="button-box" th:href="@{/index}">
+        <img th:src="@{https://img.icons8.com/ios-filled/100/user.png}" alt="Student Icon">
+        <p>STUDENT</p>
+    </a>
+    <a class="button-box" th:href="@{/admin}">
+        <img th:src="@{/img/admin.jpg}" alt="Admin Icon">
+        <p>ADMIN</p>
+    </a>
+    <a class="button-box" th:href="@{/login}">
+        <img th:src="@{https://img.icons8.com/ios-filled/100/conference-call.png}" alt="Faculty Icon">
+        <p>FACULTY</p>
+    </a>
+</div>
+</body>
+</html>

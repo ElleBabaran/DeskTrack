@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>DeskTrack</title>
+    <link rel="stylesheet" th:href="@{/css/log.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="logo">
+        <img th:src="@{/img/logo.png}" alt="DeskTrack Logo">
+    </div>
+
+    <div class="container">
+        <div class="login-card">
+            <h2>LOGIN</h2>
+
+            <form class= "login-form" th:action="@{/login}" id="loginForm" method="post">
+                <div class="input-group">
+                    <input type="text" name="username" id="username" placeholder="Email" required>
+                </div>
+                <div class="input-group">
+                    <input type="password" name="password" id="password" placeholder="Password" required>
+                </div>
+                <button type="submit" class="sign-in-button">SIGN IN</button>
+            </form>
+            <p id="error-message" style="color: rgb(0, 0, 0); text-align: center; margin-top: 10px; display: none;">Incorrect Email or Password</p>
+            <div class="links">
+                <a th:href="@{/signin}" class="create-account">Create Account</a>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

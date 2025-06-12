@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DeskTrack</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(to top, #dce6f9, #e4e6e9, #4e71db);
+            overflow: hidden;
+        }
+
+
+        .logo {
+            margin-top: -600px;
+            margin-bottom: -850px;
+            text-align: center;
+        }
+
+        .logo img {
+            max-width: 1600px;
+            height: auto;
+        }
+
+
+
+        .login-card {
+            width: 60%;
+            max-width: 500px;
+            padding: 1px 50px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        h2 {
+            font-size: 1.8em;
+            color: #000;
+            margin-bottom: 30px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            text-shadow: 2px 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group input {
+            width: 93%;
+            padding: 15px;
+            border: none;
+            border-radius: 70px;
+            background-color: transparent;
+            color: #333;
+            font-size: 1em;
+            outline: none;
+            text-align: center;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.15), 0 0 8px rgba(255, 255, 255, 0.1);
+        }
+
+        .input-group input::placeholder {
+            color: #848484;
+        }
+
+        .sign-in-button {
+            width: 93%;
+            padding: 15px;
+            border: none;
+            border-radius: 50px;
+            background: #5c6ee3;
+            font-size: 1.2em;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .sign-in-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        #error-message {
+            color: #000;
+            text-align: center;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div class="logo">
+    <img th:src="@{img/logo.png}" alt="Logo" />
+</div>
+
+<div class="login-card">
+    <h2>Admin Login</h2>
+    <form th:action="@{/admin}" method="post" id="loginForm">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <div class="input-group">
+            <input type="text" name="username" id="username" placeholder="Username" required />
+        </div>
+        <div class="input-group">
+            <input type="password" name="password" id="password" placeholder="Password" required />
+        </div>
+        <button type="submit" class="sign-in-button">Log In</button>
+    </form>
+
+    <p id="error-message">Incorrect Username or Password</p>
+</div>
+</body>
+</html>
