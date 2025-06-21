@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>User Status - DeskTrack</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            min-height: 100vh;
+            background-color: #f1f5f9;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            background-color: #99A9E0;
+            width: 250px;
+            transition: width 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            padding: 1rem 0;
+            height: 100vh;
+        }
+
+        .sidebar.collapsed {
+            width: 60px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            padding-left: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .logo-img {
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo-text {
+            margin-left: 0.75rem;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: white;
+            transition: opacity 0.3s;
+        }
+
+        .sidebar.collapsed .logo-text {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            cursor: pointer;
+            color: white;
+            user-select: none;
+            transition: background-color 0.2s ease;
+        }
+
+        .nav-item:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-icon {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+        }
+
+        .nav-text {
+            margin-left: 1rem;
+            white-space: nowrap;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar.collapsed .nav-text {
+            opacity: 0;
+            visibility: hidden;
+            width: 0;
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        .nav-bottom {
+            margin-top: auto;
+        }
+
+        .arrow-toggle {
+            position: absolute;
+            bottom: 20px;
+            right: -16px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: #1e293b;
+            color: white;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        .sidebar.collapsed .nav-item:not(.selected) .nav-icon {
+            filter: blur(1px) brightness(0.6);
+            opacity: 0.5;
+        }
+
+        .sidebar.collapsed .nav-item:not(.selected) .nav-text {
+            opacity: 0.3;
+        }
+
+        .sidebar.collapsed .nav-item.selected .nav-icon,
+        .sidebar.collapsed .nav-item.selected .nav-text {
+            filter: none;
+            opacity: 1;
+        }
+
+        .sidebar:not(.collapsed) .nav-icon,
+        .sidebar:not(.collapsed) .nav-text {
+            filter: none;
+            opacity: 1;
+        }
+
+        /* Main Content */
+        .main-content-container {
+            flex-grow: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .college-header {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+        }
+
+        .profile-section {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .profile-image-box {
+            width: 150px;
+            height: 150px;
+            background-color: #e2e8f0;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+
+        .profile-image-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-details {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;   }
+
+        .input-group label {
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+        }
+
+        .input-group input {
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid #ccc;
+        }
+
+        .status-section {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            background-color: #22c55e;
+            border-radius: 50%;
+        }
+
+        /* To-Do Section */
+        .things-to-do-section {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            width: 1220px;
+            height: 350px;
+        }
+
+        .things-to-do-section h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .todo-input {
+            display: flex;
+            justify-content: space-between; /* Align input left, button right */
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .todo-input input {
+            width: 350px; /* Fixed width for input */
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 100px;
+            font-size: 16px;
+        }
+
+        .todo-input button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 100px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .todo-input button:hover {
+            background-color: #0056b3;
+        }
+
+        .todo-list {
+            max-height: 200px;
+            overflow-y: auto;
+            padding-right: 10px; /
+        height:800px;
+
+        }
+
+        .todo-list::-webkit-scrollbar {
+            width: 8px;
+        }
+        .todo-list::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+            overflow: auto;
+        }
+        .todo-list::-webkit-scrollbar-thumb {
+            background: #99A9E0;
+            border-radius: 4px;
+        }
+        .todo-list::-webkit-scrollbar-thumb:hover {
+            background: #7a8cc7;
+        }
+
+        .todo-list ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .todo-list li {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #eee;
+            padding: 10px 0;
+        }
+
+        .task-text {
+            flex-grow: 1;
+            margin-right: 10px;
+        }
+
+        .edit-input {
+            display: none;
+            flex-grow: 1;
+            padding: 8px;
+            border: 1px solid #007bff;
+            border-radius: 6px;
+        }
+
+        .actions button {
+            padding: 6px 10px;
+            margin-left: 5px;
+            font-size: 14px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            position:relative;
+            right:-900px
+        }
+
+        .edit { background-color: #28a745; color: white; }
+        .save { background-color: #28a745; color: white; }
+        .delete { background-color: #dc3545; color: white; }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 60px;
+                position: fixed;
+                height: 100%;
+                z-index: 10;
+            }
+            .main-content-container {
+                margin-left: 60px;
+                padding: 1rem;
+            }
+            .todo-input input {
+                width: 200px; /* Adjusted for smaller screens */
+            }
+            .things-to-do-section {
+                width: 100%; /* Adjust to fit smaller screens */
+                height: 300px; /* Slightly smaller height for mobile */
+            }
+            .todo-list {
+                max-height: 180px; /* Adjusted for smaller things-to-do-section */
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar" id="sidebar">
+    <div class="logo">
+        <img th:src="@{img/DTlogo.png}" alt="DeskTrack Logo" class="logo-img" />
+        <span class="logo-text">DeskTrack</span>
+    </div>
+    <div class="nav-item" th:onclick="|location.href='@{/homepage}'|">
+        <img th:src="@{img/home.png}" alt="Home" class="nav-icon" />
+        <span class="nav-text">Home</span>
+    </div>
+    <div class="nav-item" th:onclick="|location.href='@{/user}'|">
+        <img th:src="@{img/user.png}" alt="User" class="nav-icon" />
+        <span class="nav-text">User</span>
+    </div>
+    <div class="nav-item selected" th:onclick="|location.href='@{/status}'|">
+        <img th:src="@{img/status.png}" alt="Status" class="nav-icon" />
+        <span class="nav-text">Status</span>
+    </div>
+    <div class="nav-item" th:onclick="|location.href='@{/dashboard}'|">
+        <img th:src="@{img/dashboard.png}" alt="Dashboard" class="nav-icon" />
+        <span class="nav-text">Dashboard</span>
+    </div>
+    <button class="arrow-toggle" id="arrowToggleBtn">⮜</button>
+    <div class="nav-item nav-bottom" th:onclick="|location.href='@{/login}'|">
+        <img th:src="@{img/logout.png}" alt="Logout Icon" class="nav-icon" />
+        <span class="nav-text">Log out</span>
+    </div>
+</div>
+
+<main class="main-content-container">
+
+
+    <h2 class="college-header">College: CCIT</h2>
+    <section class="profile-section">
+        <div class="profile-image-box">
+            <img th:src="@{img/profile.png}" alt="Profile Image" />
+        </div>
+    </section>
+    <section class="status-section">
+        <div class="status-indicator"></div>
+        <span>Online</span>
+    </section>
+    <section class="things-to-do-section">
+        <h3>Things to do:</h3>
+        <div class="todo-input">
+            <form th:action="@{/status/addTask}" method="post">
+                <input type="text" name="task" placeholder="Add a new task..." required />
+                <button type="submit">Add Task</button>
+            </form>
+        </div><div class="todo-list"><li th:each="task : ${tasks}">
+        <form th:action="@{/status/editTask}" method="post"
+              th:class="${task.id == editIndex} ? 'edit-form' : ''">
+
+            <input type="hidden" name="index" th:value="${task.id}" />
+
+            <!-- Text display -->
+            <span class="task-text" th:unless="${task.id == editIndex}"
+                  th:text="${task.ToDo}"></span>
+
+            <!-- Input box, visible lang sa task na ie-edit -->
+            <input type="text" class="edit-input" name="task"
+                   th:value="${task.ToDo}" th:if="${task.id == editIndex}" />
+
+            <div class="actions">
+                <button type="submit" class="delete"
+                        th:formaction="@{/status/deleteTask}" th:value="${task.id}" name="index">
+                    Delete
+                </button>
+            </div>
+        </form>
+    </li>
+
+    </div>
+
+        </div>
+    </section>
+</main>
+
+<script>
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('collapsed');
+    }
+    document.getElementById('arrowToggleBtn').addEventListener('click', toggleSidebar);
+</script>
+</body>
+</html>

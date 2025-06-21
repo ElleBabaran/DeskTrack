@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Admin Users Table</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to left, #dce6f9, #4e71db);
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+        }
+
+        /* Search box */
+        #searchInput {
+            display: block;
+            margin: 0 auto 30px auto;
+            width: 350px;
+            max-width: 90%;
+            padding: 12px 15px;
+            font-size: 16px;
+            border: 1.5px solid #ccc;
+            border-radius: 8px;
+            box-shadow: inset 1px 1px 5px #e0e0e0;
+            transition: border-color 0.3s ease;
+        }
+
+        #searchInput:focus {
+            border-color: #2980b9;
+            outline: none;
+            box-shadow: 0 0 8px rgba(41, 128, 185, 0.4);
+        }
+
+        /* Table styling */
+        table {
+            border-collapse: collapse;
+            margin: 0 auto;
+            width: 90%;
+            max-width: 1200px;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+        }
+
+        thead {
+            background-color: #2980b9;
+            color: white;
+        }
+
+        th, td {
+            padding: 14px 20px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tbody tr:hover {
+            background-color: #f1f9ff;
+        }
+
+        /* Buttons in actions */
+        .actions button, .actions a button {
+            background-color: #2980b9;
+            border: none;
+            color: white;
+            padding: 8px 14px;
+            margin-right: 8px;
+            font-size: 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.25s ease;
+            text-decoration: none;
+        }
+
+        .actions button:hover, .actions a button:hover {
+            background-color: #1c5985;
+        }
+
+        /* Delete button distinct */
+        .actions form button {
+            background-color: #e74c3c;
+        }
+
+        .actions form button:hover {
+            background-color: #b63124;
+        }
+
+        /* Responsive adjustments */
+        @media screen and (max-width: 768px) {
+            table, thead, tbody, th, td, tr {
+                display: block;
+            }
+
+            thead tr {
+                position: absolute;
+                top: -9999px;
+                left: -9999px;
+            }
+
+            tbody tr {
+                margin-bottom: 1.5rem;
+                background: white;
+                padding: 10px;
+                border-radius: 10px;
+                box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+            }
+
+            tbody td {
+                padding: 10px 5px;
+                text-align: right;
+                position: relative;
+                border: none;
+                border-bottom: 1px solid #eee;
+            }
+
+            tbody td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 10px;
+                width: 50%;
+                padding-left: 15px;
+                font-weight: 600;
+                text-align: left;
+                color: #555;
+            }
+
+            .actions button, .actions a button {
+                width: 100%;
+                margin: 6px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<h2>Admin Users Table</h2>
+
+<input type="text" id="searchInput" placeholder="Search users...">
+
+<table id="usersTable">
+    <thead>
+    <tr>
+        <th>Full Name</th>
+        <th>Username (Email)</th>
+        <th>Program</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="user : ${users}">
+        <td data-label="Full Name" th:text="${user.fullName}"></td>
+        <td data-label="Username" th:text="${user.username}"></td>
+        <td data-label="Program" th:text="${user.program}"></td>
+        <td data-label="Actions" class="actions">
+            <form th:action="@{/admin/delete/{id}(id=${user.id})}" method="post" style="display:inline;">
+                <button type="submit" onclick="return confirm('Are you sure to delete this user?');">Delete</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<script>
+    // Simple client-side search filter
+    const searchInput = document.getElementById('searchInput');
+    const table = document.getElementById('usersTable');
+    searchInput.addEventListener('keyup', function() {
+        const filter = this.value.toLowerCase();
+        const trs = table.querySelectorAll('tbody tr');
+        trs.forEach(tr => {
+            const text = tr.textContent.toLowerCase();
+            tr.style.display = text.includes(filter) ? '' : 'none';
+        });
+    });
+</script>
+
+</body>
+</html>

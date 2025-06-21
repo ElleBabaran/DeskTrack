@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Student View</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to right, #dce6f9, #4e71db);
+      margin: 0;
+      padding: 40px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+      max-width: 600px;
+    }
+    header h1 {
+      font-weight: 600;
+      font-size: 2.4rem;
+      margin-bottom: 10px;
+      color: #333;
+    }
+    #searchInput {
+      display: block;
+      margin: 0 auto 30px auto;
+      width: 350px;
+      max-width: 90%;
+      padding: 12px 15px;
+      font-size: 16px;
+      border: 1.5px solid #ccc;
+      border-radius: 8px;
+    }
+    table {
+      border-collapse: collapse;
+      margin: 0 auto;
+      width: 90%;
+      max-width: 1200px;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+    }
+    thead {
+      background-color: #2980b9;
+      color: white;
+    }
+    th, td {
+      padding: 14px 20px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    tbody tr:hover {
+      background-color: #f1f9ff;
+    }
+    .actions button {
+      background-color: #2980b9;
+      border: none;
+      color: white;
+      padding: 8px 14px;
+      font-size: 14px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .actions button:hover {
+      background-color: #1c5985;
+    }
+    #notificationArea {
+      margin-top: 20px;
+      color: green;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Who do you want to view?</h1>
+  <p>Choose your department or faculty category to view the professors available for consultation and guidance.</p>
+</header>
+
+<input type="text" id="searchInput" placeholder="Search users...">
+
+
+
+<table id="usersTable">
+  <thead>
+  <tr>
+    <th>Full Name</th>
+    <th>Status</th>
+    <th>Notes</th>
+    <th>Notify</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="status : ${statuses}">
+    <td th:text="${status.fullName}">Name</td>
+    <td th:text="${status.status}">Status</td>
+    <td th:text="${status.notes}">Notes</td>
+    <td class="actions">
+      <button type="button" onclick="notifyUser('${status.id}')">Notify</button>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+
+<script>
+  const searchInput = document.getElementById('searchInput');
+  const table = document.getElementById('usersTable');
+  searchInput.addEventListener('keyup', function() {
+    const filter = this.value.toLowerCase();
+    table.querySelectorAll('tbody tr').forEach(tr => {
+      const text = tr.textContent.toLowerCase();
+      tr.style.display = text.includes(filter) ? '' : 'none';
+    });
+  });
+
+  function notifyUser() {
+    if (!("Notification" in window)) {
+      alert("Your browser does not support desktop notifications.");
+      return;
+    }
+
+    if (Notification.permission === "granted") {
+      setTimeout(showNotification, 3000);
+    } else if (Notification.permission !== "denied") {
+      Notification.requestPermission().then(function (permission) {
+        if (permission === "granted") {
+          setTimeout(showNotification, 3000);
+        }
+      });
+    }
+
+    function showNotification() {
+      new Notification("📣 Someone is calling you outside!", {
+        body: "Please step out for a moment.",
+        icon: "https://cdn-icons-png.flaticon.com/512/545/545705.png"
+      });
+    }
+  }
+
+
+
+
+
+
+
+
+
+</script>
+
+</body>
+</html>

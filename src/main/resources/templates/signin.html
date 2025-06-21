@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DeskTrack</title>
+  <link rel="stylesheet" th:href="@{/css/sign.css}" />
+</head>
+<body>
+  <div class="logo">
+    <img th:src="@{img/logo.png}" alt="DeskTrack Logo" />
+  </div>
+
+  <div class="container">
+    <div class="left-panel">
+      <h1>Create an<br>account</h1>
+    </div>
+
+    <div class="form-panel">
+      <p class="signin-text">Already have an account? <a th:href="@{/login.html}">Log In</a></p>
+      <form th:action="@{/signin}" method="post" th:object="${user}">
+        <label>Full name</label>
+        <input type="text" th:field="*{fullName}"/>
+
+        <label>Email</label>
+        <input type="email" th:field="*{username}"/>
+
+        <label>Program</label>
+        <select th:field="*{program}">
+          <option value="" >---Select your program---</option>
+          <option value="IT">Information Technology</option>
+          <option value="CS">Computer Science</option>
+          <option value="Faculty">Faculty</option>
+        </select>
+
+
+        <label>Password</label>
+        <input type="password" th:field="*{password}"/>
+
+        <button type="submit">SIGN UP</button>
+      </form>
+    </div>
+  </div>
+  <script th:src="@{/js/script.js}"></script>
+</body>
+</html>

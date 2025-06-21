@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Status Selector</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      height: 100vh;
+      background-color: #f1f5f9;
+    }
+
+    .sidebar {
+      background-color: #99A9E0;
+      width: 250px;
+      transition: width 0.3s ease;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      padding: 1rem 0;
+    }
+
+    .sidebar.collapsed {
+      width: 60px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      padding-left: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .logo-img {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+    }
+
+    .logo-text {
+      margin-left: 0.75rem;
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: white;
+      transition: opacity 0.3s ease;
+    }
+
+    .sidebar.collapsed .logo-text {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      padding: 1rem;
+      cursor: pointer;
+      color: white;
+      user-select: none;
+      transition: background-color 0.2s ease;
+    }
+
+    .nav-item:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .nav-icon {
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
+    }
+
+    .nav-text {
+      margin-left: 1rem;
+      white-space: nowrap;
+      transition: opacity 0.3s ease;
+    }
+
+    .sidebar.collapsed .nav-text {
+      opacity: 0;
+      visibility: hidden;
+      width: 0;
+      overflow: hidden;
+      transition: all 0.2s ease;
+    }
+
+    .nav-bottom {
+      margin-top: auto;
+    }
+
+    .arrow-toggle {
+      position: absolute;
+      bottom: 20px;
+      right: -16px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      background-color: #1e293b;
+      color: white;
+      cursor: pointer;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      line-height: 1;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+      transition: transform 0.3s ease;
+      z-index: 1000;
+    }
+
+    .sidebar.collapsed .nav-item:not(.selected) .nav-icon {
+      filter: blur(1px) brightness(0.6);
+      opacity: 0.5;
+    }
+
+    .sidebar.collapsed .nav-item:not(.selected) .nav-text {
+      opacity: 0.3;
+    }
+
+    .sidebar.collapsed .nav-item.selected .nav-icon,
+    .sidebar.collapsed .nav-item.selected .nav-text {
+      filter: none;
+      opacity: 1;
+    }
+
+    .sidebar:not(.collapsed) .nav-icon,
+    .sidebar:not(.collapsed) .nav-text {
+      filter: none;
+      opacity: 1;
+    }
+
+    main.container {
+      flex-grow: 1;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 30px;
+      padding: 2rem;
+      color: #334155;
+    }
+
+    h2 {
+      color: black;
+      margin: 0;
+      font-size: 36px;
+      align-self: flex-start;
+    }
+
+    .main-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
+      width: 450px;
+      position: relative;
+      top: 50px;
+      right: 50px;
+    }
+
+    .status-menu {
+      position: relative;
+      left:-120px;
+      top:-10px;
+      background-color: #f0f4ff;
+      border-radius: 15px;
+      box-shadow: 0 3px 15px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      width: 290px;
+      margin: 15px 0;
+
+    }
+
+    .status-menu button {
+      display: flex;
+      box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+      align-items: center;
+      gap: 20px;
+      padding: 12px;
+      cursor: pointer;
+      font-size: 20px;
+      border: none;
+      border-radius: 8px;
+      color: #432818;
+      width: 100%;
+      text-align: left;
+      background-color: #DCDCDC	;
+    }
+
+    .status-menu button:not(:last-child) {
+      margin-bottom: 15px;
+    }
+
+    .status-menu button:hover {
+      opacity: 0.9;
+    }
+
+    .status-dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+    }
+
+    .note-section {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      width: 100%;
+      position: relative;
+
+
+    }
+
+    .note-section label {
+      font-size: 15px;
+      right: -100px;
+      top: -200px;
+      color: black;
+      position: absolute;
+
+    }
+
+    .note-section input {
+      position: absolute;
+      right: -290px;
+      top: -160px;
+      padding: 15px;
+      border: none;
+      border-radius: 30px;
+      color: grey;
+      font-size: 18px;
+      box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.15), 0 0 8px rgba(255, 255, 255, 0.1);
+    }
+
+    .buttons {
+      display: flex;
+      gap: 15px;
+      position: absolute;
+      right:-270px;
+      top: -90px;
+    }
+
+    .note-section button {
+      padding: 15px 30px;
+      border-radius: 30px;
+      background-color: #99A9E0;
+      cursor: pointer;
+      font-size: 18px;
+      border-color: grey;
+      border: 1px solid grey;
+      color: white;
+
+    }
+
+    .note-section button:hover {
+      background-color: #d0d7ff;
+    } .legend {
+        background-color: #f0f4ff;
+        border-radius: 15px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        padding: 20px;
+        width: 200px;
+        height: fit-content;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        position: relative;
+        top: 160px;
+        right: 20px;
+      }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+<div class="sidebar" id="sidebar">
+  <div class="logo">
+    <img th:src="@{img/DTlogo.png}" alt="DeskTrack Logo" class="logo-img" />
+    <span class="logo-text">DeskTrack</span>
+  </div>
+  <div class="nav-item" th:onclick="|location.href='@{/homepage}'|">
+    <img th:src="@{img/home.png}" alt="Home Icon" class="nav-icon" />
+    <span class="nav-text">Home</span>
+  </div>
+  <div class="nav-item" th:onclick="|location.href='@{/user}'|">
+    <img th:src="@{img/user.png}" alt="User Icon" class="nav-icon" />
+    <span class="nav-text">User</span>
+  </div>
+  <div class="nav-item" th:onclick="|location.href='@{/status}'|">
+    <img th:src="@{img/status.png}" alt="Status Icon" class="nav-icon" />
+    <span class="nav-text">Status</span>
+  </div>
+  <div class="nav-item selected" th:onclick="|location.href='@{/dashboard}'|">
+    <img th:src="@{img/dashboard.png}" alt="Dashboard Icon" class="nav-icon" />
+    <span class="nav-text">Dashboard</span>
+  </div>
+  <button class="arrow-toggle" id="arrowToggleBtn">⮜</button>
+  <div class="nav-item nav-bottom" th:onclick="|location.href='@{/login}'|">
+    <img th:src="@{img/logout.png}" alt="Logout Icon" class="nav-icon" />
+    <span class="nav-text">Log out</span>
+  </div>
+</div>
+
+<main class="container">
+  <div class="main-content">
+    <h2>STATUS</h2><form class="status-menu" th:action="@{/dashboard/update-status}" method="post">
+
+    <button type="submit" name="status" value="Available" style="background-color: #cdb4db;">
+      <span class="status-dot" style="background-color: #cdb4db;"></span>Available
+    </button>
+
+    <button type="submit" name="status" value="In meeting" style="background-color: #ccd5ae;">
+      <span class="status-dot" style="background-color: #ccd5ae;"></span>In meeting
+    </button>
+
+    <button type="submit" name="status" value="Not Available" style="background-color: #bde0fe;">
+      <span class="status-dot" style="background-color: #bde0fe;"></span>Not Available
+    </button>
+
+    <button type="submit" name="status" value="Online Consultation" style="background-color: #a3b18a;">
+      <span class="status-dot" style="background-color: #a3b18a;"></span>Online Consultation
+    </button>
+
+    <button type="submit" name="status" value="Comfort Room" style="background-color: #f7ede2;">
+      <span class="status-dot" style="background-color: #f7ede2;"></span>Comfort Room
+    </button>
+
+    <button type="submit" name="status" value="On-break" style="background-color: #dda15e;">
+      <span class="status-dot" style="background-color: #dda15e;"></span>On-break
+    </button>
+
+    <button type="submit" name="status" value="In class" style="background-color: #edc4b3;">
+      <span class="status-dot" style="background-color: #edc4b3;"></span>In class
+    </button>
+
+    <!-- CSRF token -->
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+  </form>
+
+    <div class="note-section">
+      <form th:action="@{/dashboard/save-note}" method="post">
+        <label for="noteInput">Add note:</label>
+        <input type="text" id="noteInput" name="note" th:value="${dashboardStatus.notes}" placeholder="Enter note" />
+        <div class="buttons">
+          <button type="submit">Save</button>
+          <button type="submit" th:formaction="@{/dashboard/delete-note}">Delete</button>
+        </div>
+      </form>
+    </div>
+
+  </div>
+  <div class="legend">
+    <div class="legend-item"><span class="status-dot" style="background-color: #00ff00;"></span> Available</div>
+    <div class="legend-item"><span class="status-dot" style="background-color: #00b7eb;"></span> In meeting</div>
+    <div class="legend-item"><span class="status-dot" style="background-color: #808080;"></span> Not Available</div>
+    <div class="legend-item"><span class="status-dot" style="background-color: #ff6666;"></span> Online Consultation</div>
+    <div class="legend-item"><span class="status-dot" style="background-color: #ff0000;"></span> Comfort Room</div>
+    <div class="legend-item"><span class="status-dot" style="background-color: #ff66ff;"></span> On-break</div>
+    <div class="legend-item"><span class="status-dot" style="background-color: #ffff66;"></span> In class</div>
+  </div>
+</main>
+
+<script>
+  // Sidebar toggle
+  const sidebar = document.getElementById("sidebar");
+  const arrow = document.getElementById("arrowToggleBtn");
+
+  arrow.addEventListener("click", () => {
+    sidebar.classList.toggle("collapsed");
+    arrow.innerHTML = sidebar.classList.contains("collapsed") ?  "⮞" : "⮜";
+  });
+</script>
+</body>
+</html>
