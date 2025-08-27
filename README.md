@@ -22,7 +22,7 @@ Frontend: HTML, CSS, JavaScript
 
 Backend: Java 
 
-Database: MySQL / PostgreSQL / MongoDB
+Database: PostgreSQL 
 
 Authentication: Secure login & registration, with "Forgot Password" support
 
